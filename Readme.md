@@ -44,5 +44,9 @@ Here's the step-by-step:
 
 Now any changes you make to the PNGs in your texture folder should automatically trigger an update and reload of the model! Note, the tool attempts to reload the model at the same position you had it previously, but sometimes gets it wrong. I haven't really looked into why and am not really experienced enough in 3D programming yet to know for sure anyway.
 
-Caveat: Exported textures (at least from ACNL) have a "mysterious" alpha to them. I don't know what this is and I haven't researched 3DS tech enough to explain whether it's a "feature" or a "bug" of "Ohana3DS." Removing the alpha from the texture and doing some color fixes worked well enough for my purposes, though.
+Caveats: 
+
+- Exported textures (at least from ACNL) have a "mysterious" alpha to them. I don't know what this is and I haven't researched 3DS tech enough to explain whether it's a "feature" or a "bug" of "Ohana3DS." Removing the alpha from the texture and doing some color fixes worked well enough for my purposes, though.
+
+- Some models (e.g. building interiors in ACNL) appear to use multiple "levels" (mipmaps perhaps?) and this code currently only seems to replace the "topmost" one, or something like that. I haven't looked into this more yet, but it's an inherited limitation.
 
