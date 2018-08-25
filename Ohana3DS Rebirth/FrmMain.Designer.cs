@@ -32,6 +32,7 @@
             this.TopMenu = new System.Windows.Forms.MenuStrip();
             this.MenuFile = new System.Windows.Forms.ToolStripMenuItem();
             this.MenuOpen = new System.Windows.Forms.ToolStripMenuItem();
+            this.MenuReload = new System.Windows.Forms.ToolStripMenuItem();
             this.MenuFileSeparator0 = new System.Windows.Forms.ToolStripSeparator();
             this.MenuExit = new System.Windows.Forms.ToolStripMenuItem();
             this.MenuOptions = new System.Windows.Forms.ToolStripMenuItem();
@@ -65,6 +66,7 @@
             this.MenuToolSm4shModelCreator = new System.Windows.Forms.ToolStripMenuItem();
             this.MenuHelp = new System.Windows.Forms.ToolStripMenuItem();
             this.MenuAbout = new System.Windows.Forms.ToolStripMenuItem();
+            this.MenuTexMon = new System.Windows.Forms.ToolStripMenuItem();
             this.ContentContainer.SuspendLayout();
             this.TopMenu.SuspendLayout();
             this.SuspendLayout();
@@ -93,6 +95,8 @@
             // 
             this.MenuFile.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.MenuOpen,
+            this.MenuReload,
+            this.MenuTexMon,
             this.MenuFileSeparator0,
             this.MenuExit});
             this.MenuFile.Name = "MenuFile";
@@ -102,19 +106,26 @@
             // MenuOpen
             // 
             this.MenuOpen.Name = "MenuOpen";
-            this.MenuOpen.Size = new System.Drawing.Size(103, 22);
+            this.MenuOpen.Size = new System.Drawing.Size(213, 22);
             this.MenuOpen.Text = "&Open";
             this.MenuOpen.Click += new System.EventHandler(this.MenuOpen_Click);
+            // 
+            // MenuReload
+            // 
+            this.MenuReload.Name = "MenuReload";
+            this.MenuReload.Size = new System.Drawing.Size(213, 22);
+            this.MenuReload.Text = "&Reload";
+            this.MenuOpen.Click += new System.EventHandler(this.MenuReload_Click);
             // 
             // MenuFileSeparator0
             // 
             this.MenuFileSeparator0.Name = "MenuFileSeparator0";
-            this.MenuFileSeparator0.Size = new System.Drawing.Size(100, 6);
+            this.MenuFileSeparator0.Size = new System.Drawing.Size(210, 6);
             // 
             // MenuExit
             // 
             this.MenuExit.Name = "MenuExit";
-            this.MenuExit.Size = new System.Drawing.Size(103, 22);
+            this.MenuExit.Size = new System.Drawing.Size(213, 22);
             this.MenuExit.Text = "&Exit";
             this.MenuExit.Click += new System.EventHandler(this.MenuExit_Click);
             // 
@@ -137,7 +148,7 @@
             this.MenuViewShowSidebar,
             this.MenuViewWireframeMode});
             this.MenuViewport.Name = "MenuViewport";
-            this.MenuViewport.Size = new System.Drawing.Size(152, 22);
+            this.MenuViewport.Size = new System.Drawing.Size(121, 22);
             this.MenuViewport.Text = "&Viewport";
             // 
             // MenuViewAA
@@ -155,35 +166,35 @@
             // MenuViewAANone
             // 
             this.MenuViewAANone.Name = "MenuViewAANone";
-            this.MenuViewAANone.Size = new System.Drawing.Size(152, 22);
+            this.MenuViewAANone.Size = new System.Drawing.Size(103, 22);
             this.MenuViewAANone.Text = "&None";
             this.MenuViewAANone.Click += new System.EventHandler(this.MenuViewAANone_Click);
             // 
             // MenuViewAA2x
             // 
             this.MenuViewAA2x.Name = "MenuViewAA2x";
-            this.MenuViewAA2x.Size = new System.Drawing.Size(152, 22);
+            this.MenuViewAA2x.Size = new System.Drawing.Size(103, 22);
             this.MenuViewAA2x.Text = "&2x";
             this.MenuViewAA2x.Click += new System.EventHandler(this.MenuViewAA2x_Click);
             // 
             // MenuViewAA4x
             // 
             this.MenuViewAA4x.Name = "MenuViewAA4x";
-            this.MenuViewAA4x.Size = new System.Drawing.Size(152, 22);
+            this.MenuViewAA4x.Size = new System.Drawing.Size(103, 22);
             this.MenuViewAA4x.Text = "&4x";
             this.MenuViewAA4x.Click += new System.EventHandler(this.MenuViewAA4x_Click);
             // 
             // MenuViewAA8x
             // 
             this.MenuViewAA8x.Name = "MenuViewAA8x";
-            this.MenuViewAA8x.Size = new System.Drawing.Size(152, 22);
+            this.MenuViewAA8x.Size = new System.Drawing.Size(103, 22);
             this.MenuViewAA8x.Text = "&8x";
             this.MenuViewAA8x.Click += new System.EventHandler(this.MenuViewAA8x_Click);
             // 
             // MenuViewAA16x
             // 
             this.MenuViewAA16x.Name = "MenuViewAA16x";
-            this.MenuViewAA16x.Size = new System.Drawing.Size(152, 22);
+            this.MenuViewAA16x.Size = new System.Drawing.Size(103, 22);
             this.MenuViewAA16x.Text = "&16x";
             this.MenuViewAA16x.Click += new System.EventHandler(this.MenuViewAA16x_Click);
             // 
@@ -325,7 +336,7 @@
             this.MenuToolBCHTextureReplace,
             this.MenuToolSm4shModelCreator});
             this.MenuTools.Name = "MenuTools";
-            this.MenuTools.Size = new System.Drawing.Size(48, 20);
+            this.MenuTools.Size = new System.Drawing.Size(47, 20);
             this.MenuTools.Text = "&Tools";
             // 
             // MenuToolBCHTextureReplace
@@ -357,6 +368,13 @@
             this.MenuAbout.Text = "&About";
             this.MenuAbout.Click += new System.EventHandler(this.MenuAbout_Click);
             // 
+            // MenuTexMon
+            // 
+            this.MenuTexMon.Name = "MenuTexMon";
+            this.MenuTexMon.Size = new System.Drawing.Size(213, 22);
+            this.MenuTexMon.Text = "&Set Texture Monitor Folder";
+            this.MenuTexMon.Click += new System.EventHandler(this.MenuTexMon_Click);
+            // 
             // FrmMain
             // 
             this.AllowDrop = true;
@@ -366,7 +384,7 @@
             this.MainMenuStrip = this.TopMenu;
             this.MinimumSize = new System.Drawing.Size(256, 128);
             this.Name = "FrmMain";
-            this.Text = "Ohana3DS";
+            this.Text = "Ohana3DS - Auto-Reload Hack by Southbird";
             this.TitleIcon = ((System.Drawing.Image)(resources.GetObject("$this.TitleIcon")));
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.FrmMain_FormClosing);
             this.Load += new System.EventHandler(this.FrmMain_Load);
@@ -418,5 +436,7 @@
         private System.Windows.Forms.ToolStripMenuItem MenuViewWireframeMode;
         private System.Windows.Forms.ToolStripMenuItem MenuToolBCHTextureReplace;
         private System.Windows.Forms.ToolStripMenuItem MenuToolSm4shModelCreator;
+        private System.Windows.Forms.ToolStripMenuItem MenuReload;
+        private System.Windows.Forms.ToolStripMenuItem MenuTexMon;
     }
 }

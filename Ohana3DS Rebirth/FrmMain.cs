@@ -6,6 +6,8 @@ using Ohana3DS_Rebirth.GUI;
 using Ohana3DS_Rebirth.Ohana;
 using Ohana3DS_Rebirth.Properties;
 using Ohana3DS_Rebirth.Tools;
+using System.IO;
+using Ohana3DS_Rebirth.GUI.Forms;
 
 namespace Ohana3DS_Rebirth
 {
@@ -13,11 +15,63 @@ namespace Ohana3DS_Rebirth
     {
         bool hasFileToOpen;
         string fileToOpen;
+        FileSystemWatcher modelChangeWatcher;   // Changes to the model file
+        bool textureChangeBusy;
+        FileSystemWatcher textureChangeWatcher;   // Changes to the texture directory
 
         public FrmMain()
         {
             InitializeComponent();
             TopMenu.Renderer = new OMenuStrip();
+            modelChangeWatcher = new FileSystemWatcher();
+            modelChangeWatcher.NotifyFilter = NotifyFilters.LastWrite;
+            modelChangeWatcher.Changed += ModelChangeWatcher_Changed;
+
+            textureChangeWatcher = new FileSystemWatcher();
+            textureChangeWatcher.NotifyFilter = NotifyFilters.LastWrite;
+            textureChangeWatcher.Changed += TextureChangeWatcher_Changed;
+            textureChangeBusy = false;
+        }
+
+        private void TextureChangeWatcher_Changed(object sender, FileSystemEventArgs e)
+        {
+            if (!textureChangeBusy)
+            {
+                // Inhibit the watchers because things can get janky
+                modelChangeWatcher.EnableRaisingEvents = false;
+                textureChangeWatcher.EnableRaisingEvents = false;
+
+                // FileSystemWatcher may fire multiple events depending exactly how the software
+                // that's writing the file behaves (e.g. multiple changes) so we're going to 
+                // only act on a Changed event if we're not "busy"
+
+                // TODO: This is a kinda lousy solution especially if multiple files were to change
+                // at once, but that's kind of an edge case for exactly what I'm going for here...
+                textureChangeBusy = true;
+
+                // TODO: Only react if this texture is one of the ones in use by the model
+                OhanaTexture.TextureImportExportHelper.Import(fileToOpen, textureChangeWatcher.Path);
+
+                this.BeginInvoke(new MethodInvoker(delegate
+                {
+                    reload(fileToOpen);
+                }));
+
+                textureChangeBusy = false;
+                textureChangeWatcher.EnableRaisingEvents = true;
+                modelChangeWatcher.EnableRaisingEvents = true;
+            }
+        }
+
+        private void ModelChangeWatcher_Changed(object sender, FileSystemEventArgs e)
+        {
+            if (e.FullPath == fileToOpen)   // i.e. if specifically the model file itself has changed
+            {
+                this.BeginInvoke(new MethodInvoker(delegate
+                {
+                    reload(fileToOpen);
+                }));
+            }
         }
 
         private void FrmMain_Load(object sender, EventArgs e)
@@ -52,10 +106,16 @@ namespace Ohana3DS_Rebirth
             MenuViewWireframeMode.Checked = Settings.Default.reWireframeMode;
         }
 
-        public void setFileToOpen(string fileName)
+        public void setFileToOpen(string fileName, string textureMonitorDir)
         {
             hasFileToOpen = true;
             fileToOpen = fileName;
+
+            if (!string.IsNullOrEmpty(textureMonitorDir))
+            {
+                textureChangeWatcher.Path = textureMonitorDir;
+                textureChangeWatcher.EnableRaisingEvents = true;
+            }
         }
 
         private void FrmMain_Shown(object sender, EventArgs e)
@@ -75,16 +135,45 @@ namespace Ohana3DS_Rebirth
         FileIO.formatType currentFormat;
         IPanel currentPanel;
 
+        public void reload(string fileName)
+        {
+            if (currentPanel is OViewportPanel)
+            {
+                // Backup the textureIndexMap and camera setings
+                var renderer = (currentPanel as OViewportPanel).renderer;
+                var backupTextureIndexMap = renderer.textureIndexMap;
+                var backupTranslation = renderer.getTranslation();
+                var backupRotation = renderer.getRotation();
+                var backupZoom = renderer.getZoom();
+
+                open(fileName);
+
+                renderer = (currentPanel as OViewportPanel).renderer;
+                renderer.textureIndexMap = backupTextureIndexMap;
+                renderer.setTranslation(backupTranslation.X, backupTranslation.Y);
+                renderer.setRotation(-backupRotation.X, -backupRotation.Y);
+                renderer.setZoom(backupZoom);
+            }
+            else
+            {
+                open(fileName);
+            }
+        }
+
         public void open(string fileName)
         {
+            modelChangeWatcher.EnableRaisingEvents = false;
+
             if (currentPanel != null)
             {
                 currentPanel.finalize();
                 ContentContainer.Controls.Remove((Control)currentPanel);
             }
-            
+
             try
             {
+                this.fileToOpen = fileName;
+
                 FileIO.file file = FileIO.load(fileName);
                 currentFormat = file.type;
 
@@ -112,6 +201,11 @@ namespace Ohana3DS_Rebirth
                     ContentContainer.Controls.SetChildIndex((Control)currentPanel, 0);
                     ResumeDrawing();
                     currentPanel.launch(file.data);
+
+                    modelChangeWatcher.Path = Path.GetDirectoryName(fileName);
+                    modelChangeWatcher.EnableRaisingEvents = true;
+
+                    Text = GetWindowTitle();
                 }
                 else
                     MessageBox.Show("Unsupported file format!", "Error", MessageBoxButtons.OK,
@@ -175,7 +269,7 @@ namespace Ohana3DS_Rebirth
             currentPanel.launch(model);
 
             if (error.Length > 0)
-                MessageBox.Show("Could not load the following files in MultiFile-Mode:\n" + error + "\n\n*Marked files are loadable in Single File-Mode", 
+                MessageBox.Show("Could not load the following files in MultiFile-Mode:\n" + error + "\n\n*Marked files are loadable in Single File-Mode",
                     "Warning", MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
 
@@ -213,9 +307,59 @@ namespace Ohana3DS_Rebirth
             using (OpenFileDialog openDlg = new OpenFileDialog())
             {
                 openDlg.Filter = "All files|*.*";
-                if (openDlg.ShowDialog() == DialogResult.OK) open(openDlg.FileName);
+                if (openDlg.ShowDialog() == DialogResult.OK)
+                {
+                    // Clear the previous monitor directory
+                    TextureChangeWatcherConfig(null);
+
+                    open(openDlg.FileName);
+                }
             }
         }
+
+        //Reload
+        private void MenuReload_Click(object sender, System.EventArgs e)
+        {
+            reload(fileToOpen);
+        }
+
+        //Set Texture Monitor Folder
+        private void MenuTexMon_Click(object sender, System.EventArgs e)
+        {
+            var texMonForm = new OTextureMonitorForm();
+            texMonForm.TextureMonitorFolderSet += (o, textureFolderEventArgs) =>
+            {
+                TextureChangeWatcherConfig(textureFolderEventArgs.TextureMonitorFolder);
+            };
+            texMonForm.Show();
+        }
+
+        private void TextureChangeWatcherConfig(string monitorFolder)
+        {
+            // configure watcher
+            textureChangeWatcher.EnableRaisingEvents = false;
+
+            if (!string.IsNullOrEmpty(monitorFolder))
+            {
+                textureChangeWatcher.Path = monitorFolder;
+                textureChangeWatcher.EnableRaisingEvents = true;
+            }
+
+            Text = GetWindowTitle();
+        }
+
+        private string GetWindowTitle()
+        {
+            var title = $"Ohana3DS - Auto-Reload Hack by Southbird - [{Path.GetFileName(fileToOpen)}]";
+
+            if(textureChangeWatcher.EnableRaisingEvents)
+            {
+                title += $" [{textureChangeWatcher.Path}]";
+            }
+
+            return title;
+        }
+
 
         //Exit
 

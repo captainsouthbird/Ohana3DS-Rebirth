@@ -105,6 +105,12 @@
     <Compile Include="GUI\Forms\OTextureExportForm.Designer.cs">
       <DependentUpon>OTextureExportForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="GUI\Forms\OTextureMonitorForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="GUI\Forms\OTextureMonitorForm.designer.cs">
+      <DependentUpon>OTextureMonitorForm.cs</DependentUpon>
+    </Compile>
     <Compile Include="GUI\OCheckBox.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -302,6 +308,9 @@
     <EmbeddedResource Include="GUI\Forms\OTextureExportForm.resx">
       <DependentUpon>OTextureExportForm.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="GUI\Forms\OTextureMonitorForm.resx">
+      <DependentUpon>OTextureMonitorForm.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="GUI\OFloatTextBox.resx">
       <DependentUpon>OFloatTextBox.cs</DependentUpon>
     </EmbeddedResource>
@@ -465,6 +474,12 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\ui_icon_imageed.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\OhanaTextureLib\OhanaTextureLib.csproj">
+      <Project>{e3132352-7fff-4f77-baa1-2ed66fdefa59}</Project>
+      <Name>OhanaTextureLib</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

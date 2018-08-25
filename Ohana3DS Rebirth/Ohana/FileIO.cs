@@ -14,6 +14,8 @@ using Ohana3DS_Rebirth.Ohana.Textures;
 using Ohana3DS_Rebirth.Ohana.Compressions;
 using Ohana3DS_Rebirth.Ohana.Containers;
 using Ohana3DS_Rebirth.Ohana.Animations;
+using System.Runtime.InteropServices;
+using System.Threading;
 
 namespace Ohana3DS_Rebirth.Ohana
 {
@@ -38,13 +40,61 @@ namespace Ohana3DS_Rebirth.Ohana
             public formatType type;
         }
 
+        internal static class FileLockCheckerHelper
+        {
+            const int ERROR_SHARING_VIOLATION = 32;
+            const int ERROR_LOCK_VIOLATION = 33;
+
+            private static bool IsFileLocked(Exception exception)
+            {
+                int errorCode = Marshal.GetHRForException(exception) & ((1 << 16) - 1);
+                return errorCode == ERROR_SHARING_VIOLATION || errorCode == ERROR_LOCK_VIOLATION;
+            }
+
+            internal static bool CanReadFile(string filePath)
+            {
+                try
+                {
+                    using (FileStream fileStream = File.Open(filePath, FileMode.Open, FileAccess.Read, FileShare.None))
+                    {
+                    }
+                }
+                catch (IOException ex)
+                {
+                    if (IsFileLocked(ex))
+                    {
+                        return false;
+                    }
+                }
+
+                return true;
+            }
+
+            internal static void FileReadCheck(string filePath)
+            {
+                var timeNow = DateTime.Now;
+
+                while(!CanReadFile(filePath))
+                {
+                    if((DateTime.Now - timeNow).Seconds > 30)
+                    {
+                        throw new InvalidOperationException("Couldn't get the file free for some reason");
+                    }
+
+                    Thread.Sleep(500);
+                }
+            }
+        }
+
         public static file load(string fileName)
         {
+            FileLockCheckerHelper.FileReadCheck(fileName);
+
             switch (Path.GetExtension(fileName).ToLower())
             {
                 case ".mbn": return new file { data = MBN.load(fileName), type = formatType.model };
                 case ".xml": return new file { data = NLP.load(fileName), type = formatType.model };
-                default: return load(new FileStream(fileName, FileMode.Open));
+                default: return load(new FileStream(fileName, FileMode.Open, FileAccess.Read));
             }
         }
 

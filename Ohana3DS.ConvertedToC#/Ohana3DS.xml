@@ -1,0 +1,30 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Ohana3DS</name>
+    </assembly>
+    <members>
+        <member name="T:Ohana3DS.My.Resources.Resources">
+            <summary>
+              A strongly-typed resource class, for looking up localized strings, etc.
+            </summary>
+        </member>
+        <member name="P:Ohana3DS.My.Resources.Resources.ResourceManager">
+            <summary>
+              Returns the cached ResourceManager instance used by this class.
+            </summary>
+        </member>
+        <member name="P:Ohana3DS.My.Resources.Resources.Culture">
+            <summary>
+              Overrides the current thread's CurrentUICulture property for all
+              resource lookups using this strongly typed resource class.
+            </summary>
+        </member>
+        <member name="P:Ohana3DS.My.Resources.Resources.MapProperties">
+            <summary>
+              Looks up a localized string similar to 0,???
+            16777249,Mystery Zone.
+            </summary>
+        </member>
+    </members>
+</doc>

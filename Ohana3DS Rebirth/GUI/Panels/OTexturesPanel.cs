@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Windows.Forms;
 
 using Ohana3DS_Rebirth.Ohana;
+using System.Text.RegularExpressions;
 
 namespace Ohana3DS_Rebirth.GUI
 {
@@ -83,6 +84,38 @@ namespace Ohana3DS_Rebirth.GUI
         {
             TextureList.flush(true);
             if (renderer != null) renderer.removeAllTextures();
+        }
+
+        private void TextureList_DoubleClick(object sender, EventArgs e)
+        {
+            var list = ((Ohana3DS_Rebirth.GUI.OList)sender);
+
+            var selectedIndex = list.SelectedIndex;
+
+            // HACK: This will only work work with a naming convention like ACNL
+            // uses, where eyes are like e.0, e.1, etc. and mouths are m.0, m.1...
+            // and based on that concept it will 
+
+            // Double-clicked texture
+            var texture = renderer.models.texture[selectedIndex];
+
+            // See if we can find a name/number pattern
+            var match = Regex.Match(texture.name, @"([^\d]+)([\d]+)");
+            if (match.Success && match.Groups.Count == 3)
+            {
+                var textureBase = match.Groups[1].Value;    // Component of texture before number, e.g. "e."
+                //var doubleClickedNumber = match.Groups[2].Value;
+
+                var textureBaseName = textureBase + "0";
+                var textureChangeName = texture.name;
+
+                // Find the "base" one, e.g. e.0 or m.0...
+                var baseIndex = renderer.models.texture.FindIndex(t => t.name == textureBaseName);
+                var changeIndex = renderer.models.texture.FindIndex(t => t.name == textureChangeName);
+
+                renderer.textureIndexMap[baseIndex] = changeIndex;
+            }
+
         }
     }
 }

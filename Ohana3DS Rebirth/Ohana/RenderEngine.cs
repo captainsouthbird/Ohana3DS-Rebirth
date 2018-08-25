@@ -23,6 +23,10 @@ namespace Ohana3DS_Rebirth.Ohana
 
         public RenderBase.OModelGroup models;
 
+        // VERY SIMPLE map to help with AC emotions... dunno if this is useful in another games as-is.
+        // e.0 -> e.1 -> etc.
+        public int[] textureIndexMap;
+
         public struct customVertex
         {
             public float x, y, z;
@@ -426,6 +430,12 @@ namespace Ohana3DS_Rebirth.Ohana
         public void updateTextures()
         {
             foreach (RenderBase.OTexture texture in models.texture) cacheTexture(texture);
+
+            textureIndexMap = new int[models.texture.Count];
+            for(var i = 0; i < textureIndexMap.Length; i++)
+            {
+                textureIndexMap[i] = i;
+            }
         }
 
         /// <summary>
@@ -920,7 +930,7 @@ namespace Ohana3DS_Rebirth.Ohana
                         {
                             if (textures[i].name == name[0])
                             {
-                                legacyTextureIndex = i;
+                                legacyTextureIndex = textureIndexMap[i];     // Texture setting number
                                 legacyTextureUnit = 0;
                                 break;
                             }
@@ -941,7 +951,7 @@ namespace Ohana3DS_Rebirth.Ohana
                                 {
                                     if (textures[i].name == name[j] && legacyTextureUnit < j)
                                     {
-                                        legacyTextureIndex = i;
+                                        legacyTextureIndex = textureIndexMap[i];
                                         legacyTextureUnit = j;
                                     }
                                 }
@@ -1260,6 +1270,11 @@ namespace Ohana3DS_Rebirth.Ohana
 
             render();
         }
+
+
+        public Vector2 getTranslation() { return translation; }
+        public Vector2 getRotation() { return rotation; }
+        public float getZoom() { return zoom; }
 
         /// <summary>
         ///     Wrap a Rotation Angle between -PI and PI.

@@ -1,155 +1,48 @@
-## **Ohana3DS Rebirth**
+# NOTE: I am **NOT supporting** this tool!
 
-### **What is Ohana3DS?**
+This is a passion project hack that only modified the tool to take it as far as I am personally interested. Please do not file bugs related to "Ohana3DS" features that weren't mine to begin with. If, however, you are a developer sort and want to make this even better, I'm interested!
 
-Ohana3DS is a work in progress tool used to view, extract, and ultimately replace data from decrypted 3DS roms.
+This is being released partly as a curiosity, partly for preservation, and maybe, just maybe, for someone else with similar interests to find useful.
 
-Examples of such are the ability to view Models, Textures, even some animations.
+## **Ohana3DS - Auto-Reload Hack by Southbird**
 
-Ohana3DS aims to be a one stop shop for all 3DS rom viewing, extracting, editing needs.
+### **What is Ohana3DS "Rebirth"?**
 
-### **What's this whole "Rebirth" deal?**
+The original Ohana3DS was written in Visual Basic, The Rebirth edition is a reboot of the tool in C#. See [the original Ohana3DS Rebirth](https://github.com/gdkchan/Ohana3DS-Rebirth) for more info.
 
-Originally written in Visual Basic, The Rebirth edition is a reboot of the tool in C#, which is more powerful, flexible, and stricter than the Visual Basic langage.
+### **What is the "Auto-Reload Hack"?**
 
-This allows the Programmer more horsepower with fewer issues, as the strictness of the langage helps prevent common errors.
+**GOAL:** In the name of texture-hacking ACNL models ONLY!
 
-C# tends to be an "It either works or it doesn't" kind of language.
+Those familiar with my YouTube videos have seen texture-hacked models in Animal Crossing: New Leaf. I was annoyed that online guides told me I needed to use "new" Ohana3DS to export textures and "old" Ohana3DS to import them. I thought, why not make them into one tool?
 
-Currently, Rebirth does NOT support decrypting roms, so other sources are needed for such.
+**Please note, this was ONLY tested with character models from ACNL.** It may work for other games that "old" Ohana3DS supported.
 
-However, Rebirth boasts more features and support than it's original counterpart.
+**Technical:** What I did was take the source code to "Ohana3DS Rebirth" and partially combined it with the source code to the original "Ohana3DS", as the latter provided the texture editing support I wanted. Included in this source tree is an entire VB .NET -> C# conversion of the original Ohana3DS source code, contained in "Ohana3DS.ConvertedToC#". (This is NOT used directly by my tool, only included for reference.) If you make a Solution (sln) file to include just the Project (Ohana3DS.Converted.csproj) it will run on its own presumably (almost?) as well as the original "Ohana3DS." However, once again, I didn't really test this, it was just a step in the process. It's included in the hopes it may be useful to someone but does not actually pertain to the functionality I've added to "Ohana3DS Rebirth."
 
-### **Where can I get this tool?**
+What's included (over the base "Ohana3DS Rebirth" tree) is the following:
 
-Recent updated builds as well as depreciated (legacy) builds, are provided at:
+- Ohana3DS.ConvertedToC# -- the original Ohana3DS converted from VB .NET to C# using an automated tool. Not heavily tested but may replicate the original Ohana3DS reasonably accurately.
 
-https://gbatemp.net/threads/wip-ohana3ds-tool.392576/
+- OhanaTextureLib -- this is an extraction of a small part of the original Ohana3DS code, mainly to support my purposes of texture importing. There's been a few minor modifications to get it to jive with "Ohana3DS Rebirth" as well as adding missing support for writing L4A4 textures (not heavily tested.)
 
+- OhanaTexture -- A command line tool that can do texture importing/exporting. Not particularly well tested, it was an earlier path I was going down before implementing the "Auto-Reload Hack." But it "should" work if a command line version of texture importing interests you.
 
-### **But... I want BLEEDING EDGE!**
+**Features:** Okay, so let's get into what I've actually done here!
 
-Your in luck. Getting bleeding edge is simple with a small bit of tech know how.
+This adds an automated texture import feature to "Ohana3DS Rebirth" (again, ONLY TESTED WITH "Animal Crossing: New Leaf" MODELS.)
 
-You will need Visual Studio Community 2015 (free with Microsoft account)
-Simply follow the steps outlined at:
+You can open a textured model file (bcres in my case) as always, and now you'll find a new "File" menu option, "Set Texture Monitor Folder." What this will do is point the tool to a folder on your computer which it will "monitor" for changes and then attempt to automatically apply them to the model. (Note that there are restrictions in some cases and not all model texture formats may be supported.)
 
-https://www.visualstudio.com/en-us/products/visual-studio-community-vs.aspx
+Here's the step-by-step:
 
-to get started.
+1. Open a model file with textures (e.g. ACNL villager "bcres")
 
-After the IDE (Integrated Developer Environment) is installed, you can simply visit
+2. Under the "Textures" section of the UI, click the "Export" button and export all textures to a folder (I recommend a newly created empty folder!)
 
-https://github.com/gdkchan/Ohana3DS-Rebirth
+3. Click "File" -> "Set Texture Monitor Folder" and navigate to the folder where you've dumped the textures
 
-to view the source.
+Now any changes you make to the PNGs in your texture folder should automatically trigger an update and reload of the model! Note, the tool attempts to reload the model at the same position you had it previously, but sometimes gets it wrong. I haven't really looked into why and am not really experienced enough in 3D programming yet to know for sure anyway.
 
-For those code saavy, you can obtain this source using GIT tools, or for those not so tech saavy, do not explore the contents, but look for the "Dowload ZIP" button and download the source.
+Caveat: Exported textures (at least from ACNL) have a "mysterious" alpha to them. I don't know what this is and I haven't researched 3DS tech enough to explain whether it's a "feature" or a "bug" of "Ohana3DS." Removing the alpha from the texture and doing some color fixes worked well enough for my purposes, though.
 
-If you downloaded the Zip, you need to extract it to a folder somewhere on your computer.
-
-Make sure you can easily access it for the next step. If you used Git, simply proceed.
-
-After the folder is extracted, look for the "_Ohana3DS Rebirth.sln_" file, and open it.
-
-This should automatically bring up Visual Studio Community.
-
-From here, you will be presented with a weird interface.
-
-If you get an error about opening solutions from trusted source, this is fine and a good thing.
-
-Simply uncheck the box that says "warn me for every project" (might be differently worded, as mine no longer warns me), and click ok.
-
-Now the solution is loaded.
-
-Don't worry if you don't see anything, you have made progress.
-
-Next, we will be using the menu.
-
-If you are unfamiliar with Visual Studio, follow these directions explicitly.
-
-First, you will click the dropdown box that says "debug".
-
-Do NOT confuse this with the menu version of "debug".
-
-This will have another dropdown box next to it that says "Any CPU".
-
-Change "debug" to "release".
-
-All this does from what I can tell, is prevent extra annoying debugging crap if the program runs into an error.
-
-As a user, "release" is preferred anyhow.
-
-This should be noted as optional though, as either way works.
-
-Next, in the actual menu, you will see a "build" option.
-
-Clicking this will present you with another menu.
-
-You want to click on "Build Ohana3DS Rebirth".
-
-Simply wait for the compiler to work it's magic, and you will see:
-
-_========== Build: 1 succeeded, 0 failed, 0 up-to-date, 0 skipped ==========_
-
-From here, simply navigate to the ohana project folder you downloaded and extracted, find the "bin" folder, and copy the "release" folder located inside the "x86" folder.
-
-Here is an example on my computer:
-
-_C:\gdkchan\Ohana3DS-Rebirth\Ohana3DS Rebirth\bin\x86\Release_
-
-You want to copy the release folder itself, not the contents inside.
-
-Paste this folder where you see fit, as it now contains a built version of the latest Ohana.
-
-You can safely rename the folder as you see fit, but leave the files inside alone.
-
-Ohana can be ran at anytime by opening "Ohana3DS Rebirth.exe".
-
-For future builds, simply delete the old folders, and repeat this process.
-
-### **This is confusing. Is there an easier way?**
-
-Probably.
-
-I am barely fluent with the IDE as my expertise lies with Unity 3D + Monodevelop as my IDE, though I am having to learn the VS IDE with the latest Unity update replacing Monodevelop with Visual Studio.
-
-This solution simply works, and for now is shared here to simply get you going until a better readme is made.
-
-### **What's with the extra files when I compile it myself?**
-
-Honestly I have no clue.
-
-I follow the rule: "If it ain't broke, dont delete it."
-
-I do know that gdkchan's releases only contain:
-
-_Microsoft.DirectX.Direct3D.dll_
-
-_Microsoft.DirectX.Direct3DX.dll_
-
-_Microsoft.DirectX.dll_
-
-and _Ohana3DS Rebirth.exe_
-
-Deleting the extra files doesn't seem to break anything, but delete the extra files at your own risk.
-
-### **Off topic, but who are you, what is "Unity", What is "Monodevelop" and why did you write this $^%& readme?**
-
-The name's **Fallenleader**, I am learning as an Indie Game Developer, currently working on a 3D Pokemon PC/Android remake for the original Pokemon games Red/Blue that heavily depends on Ohana to rip models and hopefully animations soon (those are actually critical).
-
-Unity 3D is a 3D engine and is unrelated to this project.
-
-Info on Unity can be found easily by searching on Google.
-
-Monodevelop is another IDE like Visual Studio, but is not needed and is useless for this project.
-
-As for this readme I wanted to contribute any way I could.
-
-Right now, as should be, gdkchan is focusing on making this epic beast of a program. 
-
-So until he makes a better readme, this is what I am able to contribute for now.
-
-Unifortuantely, I am not the best at making readme's without pictures, and couldn't figure out how to embed them.
-
-Hopefully he won't mind the footnote XD

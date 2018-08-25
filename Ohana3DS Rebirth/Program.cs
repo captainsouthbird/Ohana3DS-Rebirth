@@ -15,7 +15,16 @@ namespace Ohana3DS_Rebirth
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
             FrmMain form = new FrmMain();
-            if (args.Length > 0 && File.Exists(args[0])) form.setFileToOpen(args[0]);
+            if (args.Length > 0 && File.Exists(args[0]))
+            {
+                string textureDir = null;
+                if(args.Length >= 2 && Directory.Exists(args[1]))
+                {
+                    textureDir = args[1];
+                }
+
+                form.setFileToOpen(args[0], textureDir);
+            }
             Application.Run(form);
         }
     }

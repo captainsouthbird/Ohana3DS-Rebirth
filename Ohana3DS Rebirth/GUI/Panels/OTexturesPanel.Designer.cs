@@ -49,6 +49,7 @@
             this.TextureList.SelectedIndex = -1;
             this.TextureList.Size = new System.Drawing.Size(256, 232);
             this.TextureList.TabIndex = 1;
+            this.TextureList.DoubleClick += new System.EventHandler(this.TextureList_DoubleClick);
             // 
             // TopControls
             // 
